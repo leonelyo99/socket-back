@@ -26,7 +26,15 @@ exports.signup = (req, res, next) => {
       return user.save();
     })
     .then(result => {
-      res.status(201).json({ message: 'User created!', userId: result._id, username });
+      const token = jwt.sign(
+        {
+          username,
+          userId: result._id
+        },
+        'somesupersecretsecret',
+        { expiresIn: '1h' }
+      );
+      res.status(201).json({ message: 'User created!', userId: result._id, token  });
     })
     .catch(err => {
       if (!err.statusCode) {

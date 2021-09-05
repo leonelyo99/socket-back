@@ -10,13 +10,9 @@ exports.connectSocket = (server) => {
 
   io.sockets.on("connection", function (socket) {
     console.log("connection to the socket");
-    //emito mensaje al cliente
-    socket.emit("message", { message: "Buenas" });
-    setTimeout(function(){ 
-      socket.emit("message", { message: "Soy otro mensaje" });
-    }, 1500);
-    setTimeout(function(){ 
-      socket.emit("message", { message: "Soy otro mensaje 2" });
-    }, 3000);
+    
+    socket.on("newMessage", (data, callback) => {
+      socket.emit("message", { data });
+    });
   });
 };

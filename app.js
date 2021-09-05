@@ -2,7 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const { connectSocket } = require("./controllers/socket");
 
-// const feedRoutes = require("./routes/feed");
+const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
 
 const MONGODB_URI =
@@ -13,7 +13,17 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.json());
 
-// app.use("/feed", feedRoutes);
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader(
+    "Access-Control-Allow-Methods",
+    "OPTIONS, GET, POST, PUT, PATCH, DELETE"
+  );
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+});
+
+app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
 app.use((error, req, res, next) => {
