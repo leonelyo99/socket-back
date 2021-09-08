@@ -2,11 +2,11 @@ const Room = require("../models/room");
 const User = require("../models/user");
 
 exports.getUsers = (req, res, next) => {
-  User.find({ status: "active" })
-    .then((users) => {
+  User.find({ status: "active" }, "username")
+    .then((data) => {
       res.status(200).json({
-        ok: true,
-        users,
+        error: false,
+        data,
       });
     })
     .catch((err) => {
@@ -31,25 +31,29 @@ exports.getUserMessages = (req, res, next) => {
   }).exec((err, rooms) => {
     if (err) {
       return res.status(400).json({
-        ok: false,
+        error: true,
         err,
       });
     }
-    
+
     if (!rooms.length) {
       const room = new Room({ users: [req.body.users], messages: [] });
       room.save().then((result) => {
         return res.status(200).json({
-          ok: true,
-          room: result._id,
-          messages: [],
+          error: true,
+          data: {
+            room: result._id,
+            messages: [],
+          },
         });
       });
     } else {
-      return res.status(200).json({
-        ok: true,
-        room: rooms[0]._id,
-        messages: rooms[0].messages,
+      res.status(200).json({
+        error: false,
+        data: {
+          room: rooms[0]._id,
+          messages: rooms[0].messages,
+        },
       });
     }
   });

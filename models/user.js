@@ -17,13 +17,7 @@ const userSchema = new Schema({
   status: {
     type: String,
     default: "active"
-  },
-  rooms: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: 'Rom'
-    }
-  ]
+  }
 });
 
 userSchema.methods.toJSON = function(){

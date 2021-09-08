@@ -33,14 +33,17 @@ exports.incomingMessage = async (data) => {
       }
     })
     .then((result) => {
-      usersToNotify = result.users[0].filter((data) => data.id !== tokenData.id);
+      usersToNotify = result.users[0].filter(
+        (data) => data.id !== tokenData.id
+      );
       return {
+        error: false,
         data: {
           error: false,
-          message,
+          data: { ...message },
         },
         usersToNotify,
-        user: tokenData.id
+        user: tokenData.id,
       };
     });
 };
