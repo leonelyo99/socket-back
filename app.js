@@ -1,6 +1,6 @@
 const express = require("express");
 const mongoose = require("mongoose");
-const { connectSocket } = require("./controllers/socket");
+const { connectSocket } = require("./routes/socket");
 
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
