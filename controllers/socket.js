@@ -6,6 +6,10 @@ exports.incomingMessage = async (data) => {
   if (!data.message || !data.user || !data.room) {
     return {
       error: true,
+      data: {
+        message: "Error de validación, uno o mas campos no fueron encontrados.",
+        status: 422,
+      }
     };
   }
 
@@ -13,39 +17,48 @@ exports.incomingMessage = async (data) => {
   if (tokenData.error) {
     return {
       error: true,
+      data: {
+        message: "Token invalido",
+        status: 401,
+      },
     };
-  }
+  } else {
+    const message = {
+      data: data.message,
+      date: new Date().getTime(),
+      user: tokenData.id,
+    };
 
-  const message = {
-    data: data.message,
-    date: new Date().getTime(),
-    user: tokenData.id,
-  };
-  return await Room.findById(data.room)
-    .then((room) => {
-      if (!room) {
+    return await Room.findById(data.room)
+      .then((room) => {
+        if (!room) {
+          return {
+            error: true,
+            data: {
+              message: "Sala no encontrada",
+              status: 404,
+            }
+          };
+        } else {
+          room.messages.push(message);
+          return room.save();
+        }
+      })
+      .then((result) => {
+        usersToNotify = result.users[0].filter(
+          (data) => data.id !== tokenData.id
+        );
         return {
-          error: true,
-        };
-      } else {
-        room.messages.push(message);
-        return room.save();
-      }
-    })
-    .then((result) => {
-      usersToNotify = result.users[0].filter(
-        (data) => data.id !== tokenData.id
-      );
-      return {
-        error: false,
-        data: {
           error: false,
-          data: { ...message },
-        },
-        usersToNotify,
-        user: tokenData.id,
-      };
-    });
+          data: {
+            error: false,
+            data: { ...message },
+          },
+          usersToNotify,
+          user: tokenData.id,
+        };
+      });
+  }
 };
 
 const verifyToken = async (token) => {
@@ -53,20 +66,15 @@ const verifyToken = async (token) => {
   try {
     decodedToken = jwt.verify(token, "somesupersecretsecret");
   } catch (err) {
-    err.statusCode = 500;
     return {
       id: null,
       error: true,
-      message: "Token error",
     };
   }
   if (!decodedToken) {
-    const error = new Error("Not authenticated.");
-    error.statusCode = 401;
     return {
       id: null,
       error: true,
-      message: "Token error",
     };
   } else {
     return await User.findOne({ id: decodedToken.userId }).then((user) => {
@@ -74,13 +82,11 @@ const verifyToken = async (token) => {
         return {
           id: null,
           error: true,
-          message: "User not found",
         };
       } else {
         return {
           id: decodedToken.userId,
           error: false,
-          message: null,
         };
       }
     });

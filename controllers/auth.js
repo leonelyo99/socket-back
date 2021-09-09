@@ -7,7 +7,7 @@ const User = require("../models/user");
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Validation failed.");
+    const error = new Error("Error de validación, uno o mas campos no fueron encontrados.");
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -34,9 +34,10 @@ exports.signup = (req, res, next) => {
         "somesupersecretsecret",
         { expiresIn: "1h" }
       );
-      res
-        .status(201)
-        .json({ message: "User created!", userId: result._id, token });
+      res.status(201).json({
+        error: false,
+        data: { username, _id: result._id, token },
+      });
     })
     .catch((err) => {
       if (!err.statusCode) {
@@ -47,13 +48,21 @@ exports.signup = (req, res, next) => {
 };
 
 exports.login = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    const error = new Error("Error de validación, uno o mas campos no fueron encontrados.");
+    error.statusCode = 422;
+    error.data = errors.array();
+    throw error;
+  }
+
   const username = req.body.username;
   const password = req.body.password;
   let loadedUser;
   User.findOne({ username: username })
     .then((user) => {
       if (!user) {
-        const error = new Error("A user could not be found.");
+        const error = new Error("Usuario no encontrado");
         error.statusCode = 401;
         throw error;
       }
@@ -62,7 +71,7 @@ exports.login = (req, res, next) => {
     })
     .then((isEqual) => {
       if (!isEqual) {
-        const error = new Error("Wrong password!");
+        const error = new Error("Contraseña incorrecta");
         error.statusCode = 401;
         throw error;
       }
@@ -75,7 +84,14 @@ exports.login = (req, res, next) => {
         "somesupersecretsecret",
         { expiresIn: "1h" }
       );
-      res.status(200).json({ token: token, userId: loadedUser._id.toString() });
+      res.status(200).json({
+        error: false,
+        data: {
+          username: loadedUser.username,
+          token: token,
+          _id: loadedUser._id.toString(),
+        },
+      });
     })
     .catch((err) => {
       if (!err.statusCode) {

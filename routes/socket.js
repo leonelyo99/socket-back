@@ -15,11 +15,16 @@ exports.connectSocket = (server) => {
 
     socket.on("newMessage", (data, callback) => {
       incomingMessage(data).then((resp) => {
-        if(!resp.error){
-          io.emit(`message-${data.room}`, { ...resp.data });
+        if (!resp.error) {
+          io.emit(`message-${data.room}`, resp.data);
           resp.usersToNotify.forEach((user) => {
-            io.emit(`notification-${user.id}`, resp.user);
+            io.emit(`notification-${user.id}`, {
+              error: false,
+              data: resp.user,
+            });
           });
+        } else {
+          socket.emit(`error`, resp);
         }
       });
     });

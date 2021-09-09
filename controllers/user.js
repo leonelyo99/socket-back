@@ -30,10 +30,9 @@ exports.getUserMessages = (req, res, next) => {
     }),
   }).exec((err, rooms) => {
     if (err) {
-      return res.status(400).json({
-        error: true,
-        err,
-      });
+      const error = new Error("Sala no encontrada");
+      error.statusCode = 404;
+      throw error;
     }
 
     if (!rooms.length) {
