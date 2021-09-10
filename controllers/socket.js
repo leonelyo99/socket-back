@@ -64,7 +64,7 @@ exports.incomingMessage = async (data) => {
 const verifyToken = async (token) => {
   let decodedToken;
   try {
-    decodedToken = jwt.verify(token, "somesupersecretsecret");
+    decodedToken = jwt.verify(token, process.env.SEED_TOKEN);
   } catch (err) {
     return {
       id: null,

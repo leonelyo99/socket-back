@@ -1,13 +1,15 @@
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+const newToken = require("../helpers/token");
 
 const User = require("../models/user");
 
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Error de validación, uno o mas campos no fueron encontrados.");
+    const error = new Error(
+      "Error de validación, uno o mas campos no fueron encontrados."
+    );
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -26,14 +28,8 @@ exports.signup = (req, res, next) => {
       return user.save();
     })
     .then((result) => {
-      const token = jwt.sign(
-        {
-          username,
-          userId: result._id.toString(),
-        },
-        "somesupersecretsecret",
-        { expiresIn: "1h" }
-      );
+      const token = newToken(username, result._id.toString());
+
       res.status(201).json({
         error: false,
         data: { username, _id: result._id, token },
@@ -50,7 +46,9 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error("Error de validación, uno o mas campos no fueron encontrados.");
+    const error = new Error(
+      "Error de validación, uno o mas campos no fueron encontrados."
+    );
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -76,19 +74,13 @@ exports.login = (req, res, next) => {
         throw error;
       }
 
-      const token = jwt.sign(
-        {
-          username: loadedUser.username,
-          userId: loadedUser._id.toString(),
-        },
-        "somesupersecretsecret",
-        { expiresIn: "1h" }
-      );
+      const token = newToken(loadedUser.username, loadedUser._id.toString());
+
       res.status(200).json({
         error: false,
         data: {
           username: loadedUser.username,
-          token: token,
+          token,
           _id: loadedUser._id.toString(),
         },
       });

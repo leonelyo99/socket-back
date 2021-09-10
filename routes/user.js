@@ -1,11 +1,11 @@
 const express = require('express');
 
 const userController = require('../controllers/user');
-const isAuth = require('../middleware/is-auth');
+const token = require('../middleware/token');
 
 const router = express.Router();
 
-router.get('/users', isAuth, userController.getUsers);
-router.post('/messages', isAuth, userController.getUserMessages);
+router.get('/users', token, userController.getUsers);
+router.post('/messages', token, userController.getUserMessages);
 
 module.exports = router;
