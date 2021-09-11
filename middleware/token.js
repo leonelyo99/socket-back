@@ -4,7 +4,7 @@ const newToken = require("../helpers/token");
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    const error = new Error("Not Authorization");
+    const error = new Error("Token invalido");
     error.statusCode = 401;
     throw error;
   }
