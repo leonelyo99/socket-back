@@ -27,7 +27,7 @@ let urlDB;
 
 if (process.env.NODE_ENV === "dev") {
   urlDB =
-    "mongodb+srv://mern_user:yqgUWiCPZaaGExOs@cluster0.bpinj.mongodb.net/messages?retryWrites=true";
+    "your db link";
 } else {
   urlDB = process.env.MONGO_URI;
 }
