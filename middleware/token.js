@@ -1,10 +1,11 @@
 const jwt = require("jsonwebtoken");
+const { errorsDictionary } = require("../helpers/errors");
 const newToken = require("../helpers/token");
 
 module.exports = (req, res, next) => {
   const authHeader = req.get("Authorization");
   if (!authHeader) {
-    const error = new Error("Token invalido");
+    const error = new Error(errorsDictionary.middleware_invalid_token_error);
     error.statusCode = 401;
     throw error;
   }
@@ -13,12 +14,12 @@ module.exports = (req, res, next) => {
   try {
     decodedToken = jwt.verify(token, process.env.SEED_TOKEN);
   } catch (err) {
-    const error = new Error("Token invalido");
+    const error = new Error(errorsDictionary.middleware_invalid_token_error);
     error.statusCode = 401;
     throw error;
   }
   if (!decodedToken) {
-    const error = new Error("Token invalido");
+    const error = new Error(errorsDictionary.middleware_invalid_token_error);
     error.statusCode = 401;
     throw error;
   } else {

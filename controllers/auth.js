@@ -2,14 +2,13 @@ const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const newToken = require("../helpers/token");
 
+const { errorsDictionary } = require("../helpers/errors");
 const User = require("../models/user");
 
 exports.signup = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error(
-      "Error de validación, uno o mas campos no fueron encontrados."
-    );
+    const error = new Error(errors.array()[0].msg || errorsDictionary.auth_missing_fields_error);
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -46,9 +45,7 @@ exports.signup = (req, res, next) => {
 exports.login = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    const error = new Error(
-      "Error de validación, uno o mas campos no fueron encontrados."
-    );
+    const error = new Error(errors.array()[0].msg || errorsDictionary.auth_missing_fields_error);
     error.statusCode = 422;
     error.data = errors.array();
     throw error;
@@ -60,7 +57,7 @@ exports.login = (req, res, next) => {
   User.findOne({ username: username })
     .then((user) => {
       if (!user) {
-        const error = new Error("Usuario no encontrado");
+        const error = new Error(errorsDictionary.auth_user_password_error);
         error.statusCode = 401;
         throw error;
       }
@@ -69,7 +66,7 @@ exports.login = (req, res, next) => {
     })
     .then((isEqual) => {
       if (!isEqual) {
-        const error = new Error("Contraseña incorrecta");
+        const error = new Error(errorsDictionary.auth_user_password_error);
         error.statusCode = 401;
         throw error;
       }

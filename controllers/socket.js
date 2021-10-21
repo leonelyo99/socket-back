@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { errorsDictionary } = require("../helpers/errors");
 const Room = require("../models/room");
 const User = require("../models/user");
 
@@ -7,7 +8,7 @@ exports.incomingMessage = async (data) => {
     return {
       error: true,
       data: {
-        message: "Error de validación, uno o mas campos no fueron encontrados.",
+        message: errorsDictionary.socket_user_password_error,
         status: 422,
       }
     };
@@ -18,7 +19,7 @@ exports.incomingMessage = async (data) => {
     return {
       error: true,
       data: {
-        message: "Token invalido",
+        message: errorsDictionary.socket_invalid_token_error,
         status: 401,
       },
     };
@@ -35,7 +36,7 @@ exports.incomingMessage = async (data) => {
           return {
             error: true,
             data: {
-              message: "Sala no encontrada",
+              message: errorsDictionary.socket_room_found_error,
               status: 404,
             }
           };

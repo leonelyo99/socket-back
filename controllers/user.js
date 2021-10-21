@@ -1,3 +1,4 @@
+const { errorsDictionary } = require("../helpers/errors");
 const Room = require("../models/room");
 const User = require("../models/user");
 
@@ -30,7 +31,7 @@ exports.getUserMessages = (req, res, next) => {
     }),
   }).exec((err, rooms) => {
     if (err) {
-      const error = new Error("Sala no encontrada");
+      const error = new Error(errorsDictionary.user_room_found_error);
       error.statusCode = 404;
       throw error;
     }
