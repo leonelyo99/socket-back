@@ -40,7 +40,7 @@ exports.getUserMessages = (req, res, next) => {
       const room = new Room({ users: [req.body.users], messages: [] });
       room.save().then((result) => {
         return res.status(200).json({
-          error: true,
+          error: false,
           data: {
             room: result._id,
             messages: [],
