@@ -27,7 +27,7 @@ let urlDB;
 
 if (process.env.NODE_ENV === "dev") {
   urlDB =
-    "your db link here";
+    "your db here";
 } else {
   urlDB = process.env.MONGO_URI;
 }

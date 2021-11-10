@@ -7,6 +7,11 @@ The libraries used in the project are `socket.io`, `express`, `bcryptjs`, `mongo
 ## Commands
 Los comandos para levantar el proyecto son: `npm install` luego `npm start`
 
+## Fronts
+#### [Angular socket front](https://github.com/leonelyo99/socket-front-angular)     
+#### [React socket front](https://github.com/leonelyo99/socket-front-react)     
+#### [Vue socket front](https://github.com/leonelyo99/socket-front-vue)
+
 ## Endpoints
 |                |Description                    |Method                       |Request:                     | Response:                   |
 |------          |------                         |------                       |------                       |------                       |
@@ -63,8 +68,3 @@ Los comandos para levantar el proyecto son: `npm install` luego `npm start`
 |                                  |receives the id of the user    |                             |data: string                 |
 |                                  |who has notification           |                             |                             |
 |------                            |------                         |------                       |------                       |
-
-## Fronts
-#### [Angular socket front](https://github.com/leonelyo99/socket-front-angular)     
-#### [React socket front](https://github.com/leonelyo99/socket-front-react)     
-#### [Vue socket front](https://github.com/leonelyo99/socket-front-vue)
